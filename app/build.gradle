@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-android-extensions'
 }
 
 android {
@@ -8,11 +9,11 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField 'String', 'API_BASE_URL', "\"\""
+            buildConfigField 'String', 'API_BASE_URL', "\"https://api.github.com\""
             buildConfigField 'boolean', "ISDEBUG", "true"
         }
         release {
-            buildConfigField 'String', 'API_BASE_URL', "\"\""
+            buildConfigField 'String', 'API_BASE_URL', "\"https://api.github.com\""
             buildConfigField 'boolean', "ISDEBUG", "false"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -64,6 +65,7 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:4.9.0"
     // 標準轉換器，用以去掉Retrofit使用Multipart上傳參數給Server，String參數會多一對雙引號
     implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
 
     testImplementation 'junit:junit:4.+'

@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 //        setContentView(R.layout.activity_main)
         setContentView(binding.root)
 
-        Toast.makeText(this, "${binding.mainHello.text}", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "${binding.mainHello.text}", Toast.LENGTH_SHORT).show();
     }
 
     override fun onStop() {
