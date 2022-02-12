@@ -1,4 +1,4 @@
-package com.example.searchgithubusers
+package com.example.searchgithubusers.view.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
