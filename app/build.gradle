@@ -6,6 +6,19 @@ plugins {
 android {
     compileSdk 31
 
+    buildTypes {
+        debug {
+            buildConfigField 'String', 'API_BASE_URL', "\"\""
+            buildConfigField 'boolean', "ISDEBUG", "true"
+        }
+        release {
+            buildConfigField 'String', 'API_BASE_URL', "\"\""
+            buildConfigField 'boolean', "ISDEBUG", "false"
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
     defaultConfig {
         applicationId "com.example.searchgithubusers"
         minSdk 21
@@ -44,6 +57,14 @@ dependencies {
     // View Model
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
+
+    //Retrofit and GSON
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation "com.squareup.okhttp3:logging-interceptor:4.9.0"
+    // 標準轉換器，用以去掉Retrofit使用Multipart上傳參數給Server，String參數會多一對雙引號
+    implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
+
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
