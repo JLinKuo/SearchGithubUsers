@@ -2,10 +2,12 @@ package com.example.searchgithubusers.model.network
 
 import android.util.Log
 import com.example.searchgithubusers.BuildConfig.API_BASE_URL
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.concurrent.TimeUnit
 
@@ -32,6 +34,10 @@ class RemoteDataSource {
             .build()
     }
 
+    private val moshi by lazy {
+        Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+    }
+
     fun <Api> buildApi(
         api: Class<Api>
     ): Api {
@@ -39,7 +45,7 @@ class RemoteDataSource {
             .baseUrl(API_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(ScalarsConverterFactory.create())      // 透過Multipart傳檔案Server，Server那的Json格式都會夾帶雙引號
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
             .create(api)
     }
