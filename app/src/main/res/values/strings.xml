@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SearchGithubUsers</string>
+
+    <string name="dialog_confirm">確認</string>
+    <string name="dialog_error_network">網路連線異常，請確認後重試</string>
+    <string name="dialog_error_server_busy">伺服器忙碌中，請稍後再試(%s)</string>
+    <string name="dialog_wait">請稍後&#8230;</string>
 </resources>
