@@ -16,10 +16,10 @@ class SearchUsersViewModel: BaseViewModel() {
     val searchUsersRepository: LiveData<Resource<SearchUsersResponse>>
         get() = _searchUsersResponse
 
-    fun searchUsers() {
+    fun searchUsers(query: String) {
         viewModelScope.launch {
             _searchUsersResponse.value = Resource.Loading
-            _searchUsersResponse.value = repository.searchUsers()
+            _searchUsersResponse.value = repository.searchUsers(query)
         }
     }
 }

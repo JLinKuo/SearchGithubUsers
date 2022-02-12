@@ -6,5 +6,6 @@
     <string name="dialog_error_server_busy">伺服器忙碌中，請稍後再試(%s)</string>
     <string name="dialog_wait">請稍後&#8230;</string>
 
-    <string name="search_users">Search Users</string>
+    <string name="search_hint">請輸入欲搜尋的姓名</string>
+    <string name="search_users">搜尋</string>
 </resources>

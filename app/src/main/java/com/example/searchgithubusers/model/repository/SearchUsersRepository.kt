@@ -1,7 +1,7 @@
 package com.example.searchgithubusers.model.repository
 
 class SearchUsersRepository: BaseRepository() {
-    suspend fun searchUsers() = safeApiCall {
-        apiService.searchUsers("qoo", 30, 1)
+    suspend fun searchUsers(query: String) = safeApiCall {
+        apiService.searchUsers(query, 30, 1)
     }
 }

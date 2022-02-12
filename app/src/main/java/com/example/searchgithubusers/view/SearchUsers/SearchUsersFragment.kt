@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.searchgithubusers.R
 import com.example.searchgithubusers.databinding.FragmentSearchUsersBinding
 import com.example.searchgithubusers.model.network.Resource
@@ -17,16 +19,25 @@ import com.example.searchgithubusers.view.base.handleApiError
  */
 class SearchUsersFragment : BaseFragment<SearchUsersViewModel, FragmentSearchUsersBinding>() {
 
+    private val listAdapter by lazy { SearchUserItemAdapter() }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setView()
         setListener()
         setObserver()
     }
 
+    private fun setView() {
+        binding.listView.layoutManager = LinearLayoutManager(activity)
+        binding.listView.adapter = listAdapter
+        binding.listView.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
+    }
+
     private fun setListener() {
         binding.searchUsers.setOnClickListener {
-            viewModel.searchUsers()
+            viewModel.searchUsers(binding.query.text.toString())
         }
     }
 
@@ -34,9 +45,7 @@ class SearchUsersFragment : BaseFragment<SearchUsersViewModel, FragmentSearchUse
         viewModel.searchUsersRepository.observe(viewLifecycleOwner) {
             when(it) {
                 is Resource.Success -> {
-                    it.value.listItems.forEach { item ->
-                        Log.d("JLin", "avatar: ${item.avatarUrl}")
-                    }
+                    listAdapter.updateList(it.value.listItems)
                     activity.dismissProgressBar()
                 }
                 is Resource.Failure -> handleApiError(it)
