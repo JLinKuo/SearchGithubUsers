@@ -5,29 +5,28 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.searchgithubusers.databinding.ViewListUsersItemBinding
+import com.example.searchgithubusers.databinding.ViewListUsersGridItemBinding
 import com.example.searchgithubusers.model.network.bean.GithubUser
 
-class SearchUserItemAdapter: RecyclerView.Adapter<SearchUserItemAdapter.ViewHolder>() {
+class SearchUserGridItemAdapter: RecyclerView.Adapter<SearchUserGridItemAdapter.ViewHolder>()  {
 
     private lateinit var context: Context
     private val listUsers by lazy { ArrayList<GithubUser>() }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
-        return ViewHolder(ViewListUsersItemBinding.inflate(
+        return ViewHolder(
+            ViewListUsersGridItemBinding.inflate(
             LayoutInflater.from(context), parent, false)
         )
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Glide.with(context).load(listUsers[position].avatarUrl).into(holder.binding.avatar)
-        holder.binding.username.text = listUsers[position].login
+    override fun onBindViewHolder(holder: SearchUserGridItemAdapter.ViewHolder, position: Int) {
+        Glide.with(context).load(listUsers[position].avatarUrl).into(holder.binding.gridListAvatar)
+        holder.binding.gridListUsername.text = listUsers[position].login
     }
 
-    override fun getItemCount(): Int {
-        return listUsers.size
-    }
+    override fun getItemCount() = listUsers.size
 
     fun updateList(list: List<GithubUser>) {
         this.listUsers.clear()
@@ -37,5 +36,5 @@ class SearchUserItemAdapter: RecyclerView.Adapter<SearchUserItemAdapter.ViewHold
 
     fun getUserList() = listUsers
 
-    inner class ViewHolder(val binding: ViewListUsersItemBinding): RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(val binding: ViewListUsersGridItemBinding): RecyclerView.ViewHolder(binding.root)
 }
