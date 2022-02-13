@@ -1,6 +1,8 @@
 package com.example.searchgithubusers.view.SearchUsers
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -23,10 +25,14 @@ import com.example.searchgithubusers.view.base.handleApiError
  */
 class SearchUsersFragment : BaseFragment<SearchUsersViewModel, FragmentSearchUsersBinding>() {
 
-    private val listAdapter by lazy { SearchUserItemAdapter() }
+    private val listAdapter by lazy {
+        SearchUserItemAdapter  { githubUser -> go2UserGithubByBrowser(githubUser) }
+    }
     private val linearLayoutManager by lazy { LinearLayoutManager(activity) }
 
-    private val listGridAdapter by lazy { SearchUserGridItemAdapter() }
+    private val listGridAdapter by lazy {
+        SearchUserGridItemAdapter  { githubUser -> go2UserGithubByBrowser(githubUser) }
+    }
     private val gridLayoutManager by lazy { GridLayoutManager(activity, 2) }
 
     private val listUsers by lazy { ArrayList<GithubUser>() }
@@ -157,6 +163,11 @@ class SearchUsersFragment : BaseFragment<SearchUsersViewModel, FragmentSearchUse
     }
 
     private fun isLinearListView() = binding.listView.tag == "LinearLayoutManager"
+
+    private fun go2UserGithubByBrowser(githubUser: GithubUser) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(githubUser.htmlUrl))
+        startActivity(intent)
+    }
 
     override fun getViewModel() = SearchUsersViewModel::class.java
 

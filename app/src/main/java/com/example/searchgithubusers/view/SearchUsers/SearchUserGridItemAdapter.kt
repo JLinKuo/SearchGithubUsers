@@ -8,7 +8,9 @@ import com.bumptech.glide.Glide
 import com.example.searchgithubusers.databinding.ViewListUsersGridItemBinding
 import com.example.searchgithubusers.model.network.bean.GithubUser
 
-class SearchUserGridItemAdapter: RecyclerView.Adapter<SearchUserGridItemAdapter.ViewHolder>()  {
+class SearchUserGridItemAdapter(
+    private val onItemClicked: (GithubUser) -> Unit
+): RecyclerView.Adapter<SearchUserGridItemAdapter.ViewHolder>()  {
 
     private lateinit var context: Context
     private val listUsers by lazy { ArrayList<GithubUser>() }
@@ -24,6 +26,10 @@ class SearchUserGridItemAdapter: RecyclerView.Adapter<SearchUserGridItemAdapter.
     override fun onBindViewHolder(holder: SearchUserGridItemAdapter.ViewHolder, position: Int) {
         Glide.with(context).load(listUsers[position].avatarUrl).into(holder.binding.gridListAvatar)
         holder.binding.gridListUsername.text = listUsers[position].login
+
+        holder.itemView.setOnClickListener {
+            onItemClicked(listUsers[holder.adapterPosition])
+        }
     }
 
     override fun getItemCount() = listUsers.size
