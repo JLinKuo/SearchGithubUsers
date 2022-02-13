@@ -85,6 +85,7 @@ class SearchUsersFragment : BaseFragment<SearchUsersViewModel, FragmentSearchUse
         binding.listView.addOnScrollListener(listScrollListener)
 
         binding.searchUsers.setOnClickListener {
+            viewModel.nextPage = 1
             viewModel.isLoading = true
             viewModel.searchUsers(binding.query.text.toString())
             hideSoftwareKeyboard()
@@ -131,11 +132,12 @@ class SearchUsersFragment : BaseFragment<SearchUsersViewModel, FragmentSearchUse
             when(it) {
                 is Resource.Success -> {
                     viewModel.isLoading = false
-                    viewModel.nextPage += 1
 
                     if(viewModel.nextPage == 1) {
                         listUsers.clear()
                     }
+
+                    viewModel.nextPage += 1
 
                     listUsers.addAll(it.value.listItems)
 
