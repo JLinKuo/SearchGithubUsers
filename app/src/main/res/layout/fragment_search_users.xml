@@ -46,7 +46,7 @@
             tools:listitem="@layout/view_list_users_item"
             />
 
-        <ImageView
+        <com.example.searchgithubusers.view.SearchUsers.ChangeListModeView
             android:id="@+id/list_mode_change"
             android:layout_width="40dp"
             android:layout_height="40dp"
