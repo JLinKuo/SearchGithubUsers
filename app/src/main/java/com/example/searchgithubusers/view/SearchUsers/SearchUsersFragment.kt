@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.core.widget.doAfterTextChanged
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +21,8 @@ import com.example.searchgithubusers.model.network.Resource
 import com.example.searchgithubusers.model.network.bean.GithubUser
 import com.example.searchgithubusers.view.base.BaseFragment
 import com.example.searchgithubusers.view.base.handleApiError
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * A simple [Fragment] subclass.
@@ -34,6 +38,8 @@ class SearchUsersFragment : BaseFragment<SearchUsersViewModel, FragmentSearchUse
         SearchUserGridItemAdapter  { githubUser -> go2UserGithubByBrowser(githubUser) }
     }
     private val gridLayoutManager by lazy { GridLayoutManager(activity, 2) }
+
+    private var searchTimer: Timer? = null
 
     private val listUsers by lazy { ArrayList<GithubUser>() }
 
@@ -90,13 +96,6 @@ class SearchUsersFragment : BaseFragment<SearchUsersViewModel, FragmentSearchUse
     private fun setListener() {
         binding.listView.addOnScrollListener(listScrollListener)
 
-        binding.searchUsers.setOnClickListener {
-            viewModel.nextPage = 1
-            viewModel.isLoading = true
-            viewModel.searchUsers(binding.query.text.toString())
-            hideSoftwareKeyboard()
-        }
-
         binding.listModeChange.setOnClickListener {
             if(isLinearListView()) {
                 Glide.with(this).load(R.drawable.ic_list_view).into(binding.listModeChange)
@@ -105,6 +104,21 @@ class SearchUsersFragment : BaseFragment<SearchUsersViewModel, FragmentSearchUse
                 Glide.with(this).load(R.drawable.ic_grid_view).into(binding.listModeChange)
                 setLinearListView()
             }
+        }
+
+        binding.query.doAfterTextChanged {
+            searchTimer = Timer()
+            searchTimer?.schedule(object: TimerTask() {
+                override fun run() {
+                    viewModel.nextPage = 1
+                    viewModel.isLoading = true
+                    viewModel.searchUsers(binding.query.text.toString())
+                }
+            }, 600)
+        }
+
+        binding.query.doOnTextChanged { _, _, _, _ ->
+            searchTimer?.cancel()
         }
     }
 
