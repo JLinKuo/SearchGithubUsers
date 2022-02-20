@@ -1,11 +1,13 @@
 package com.example.searchgithubusers.view.SearchUsers
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent.*
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -23,6 +25,9 @@ import com.example.searchgithubusers.view.base.BaseFragment
 import com.example.searchgithubusers.view.base.handleApiError
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.abs
+
+private const val MIN_LENGTH = 2
 
 /**
  * A simple [Fragment] subclass.
@@ -42,6 +47,11 @@ class SearchUsersFragment : BaseFragment<SearchUsersViewModel, FragmentSearchUse
     private var searchTimer: Timer? = null
 
     private val listUsers by lazy { ArrayList<GithubUser>() }
+
+    private var startRawX = 0F
+    private var startRawY = 0F
+    private var xCoOrdinate = 0f
+    private var yCoOrdinate = 0f
 
     private val listScrollListener = object: RecyclerView.OnScrollListener() {
         private var firstVisibleItemPosition = 0
@@ -93,7 +103,45 @@ class SearchUsersFragment : BaseFragment<SearchUsersViewModel, FragmentSearchUse
         setLinearListView()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setListener() {
+        binding.listModeChange.setOnTouchListener { view, event ->
+            when(event.action) {
+                ACTION_DOWN -> {
+                    // 得儲存是手指在畫面上的位置(RawX, RawY)，而非View中的位置(X, Y)
+                    startRawX = event.rawX
+                    startRawY = event.rawY
+
+                    xCoOrdinate = view.x - event.rawX
+                    yCoOrdinate = view.y - event.rawY
+
+                    true
+                }
+
+                ACTION_MOVE -> {
+                    view.animate()
+                        .x(event.rawX + xCoOrdinate)
+                        .y(event.rawY + yCoOrdinate)
+                        .setDuration(0)
+                        .start()
+
+                    true
+                }
+
+                ACTION_UP -> {
+                    if((abs(event.rawX - startRawX) < 3 || abs(event.rawY - startRawY) < 3)) {
+                        binding.listModeChange.performClick()
+                    }
+
+                    true
+                }
+
+                else -> {
+                    true
+                }
+            }
+        }
+
         binding.listView.addOnScrollListener(listScrollListener)
 
         binding.listModeChange.setOnClickListener {
@@ -107,14 +155,18 @@ class SearchUsersFragment : BaseFragment<SearchUsersViewModel, FragmentSearchUse
         }
 
         binding.query.doAfterTextChanged {
-            searchTimer = Timer()
-            searchTimer?.schedule(object: TimerTask() {
-                override fun run() {
-                    viewModel.nextPage = 1
-                    viewModel.isLoading = true
-                    viewModel.searchUsers(binding.query.text.toString())
+            binding.query.text?.let {
+                if(it.length >= MIN_LENGTH) {
+                    searchTimer = Timer()
+                    searchTimer?.schedule(object : TimerTask() {
+                        override fun run() {
+                            viewModel.nextPage = 1
+                            viewModel.isLoading = true
+                            viewModel.searchUsers(binding.query.text.toString())
+                        }
+                    }, 600)
                 }
-            }, 600)
+            }
         }
 
         binding.query.doOnTextChanged { _, _, _, _ ->
@@ -155,6 +207,7 @@ class SearchUsersFragment : BaseFragment<SearchUsersViewModel, FragmentSearchUse
 
                     if(viewModel.nextPage == 1) {
                         listUsers.clear()
+                        hideSoftwareKeyboard()
                     }
 
                     viewModel.nextPage += 1
